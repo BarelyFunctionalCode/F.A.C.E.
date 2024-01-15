@@ -15,7 +15,7 @@ class TkinterFace:
     # Canvas for drawing face
     self.frame = tk.Frame(self.root, bg="black")
     self.frame.pack(fill=tk.X, padx=5, pady=5, side=tk.TOP)
-    self.graphic_canvas = tk.Canvas(self.frame, height=400, background='black', )
+    self.graphic_canvas = tk.Canvas(self.frame, height=400, bg='black')
     self.graphic_canvas.pack(fill=tk.X)
 
     # Face Parameters

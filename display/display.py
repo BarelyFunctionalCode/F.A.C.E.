@@ -10,7 +10,9 @@ class Display:
     # Initialize base Tkinter window and the face and terminal objects
     self.root = tk.Tk()
     self.root.title("H.A.N.N.S")
-    self.root.geometry("800x600")
+    self.root.geometry("800x600+1920+480")
+    self.root.wm_attributes('-topmost', 1)
+    self.root.overrideredirect(1)
 
     self.is_active = True
     self.is_waking_up = False
@@ -20,12 +22,18 @@ class Display:
     self.face = TkinterFace(self.root)
     self.terminal = TkinterTerminal(self.root, self.face.talking_queue)
 
+  def stop(self):
+    # Stop the Tkinter main loop
+    self.root.destroy()
+    self.root = None
 
   def start(self):
     # Start the Tkinter main loop
     self.check_activity()
+    self.root.bind_all("<Control-c>", lambda e: self.stop())
     self.root.mainloop()
 
+    
   def check_activity(self):
     if self.face.is_active or self.terminal.is_active:
       self.inactivity_timer = 0
