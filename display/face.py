@@ -35,8 +35,8 @@ class TkinterFace:
         "speed_factor": 1.0
       },
       "mouth_open_factor": {
-        "current_value": 0.2,
-        "target_value": 0.2,
+        "current_value": 0.0,
+        "target_value": 0.0,
         "max_speed": .1,
         "min_speed": .01,
         "speed_factor": 1.0,
@@ -85,6 +85,7 @@ class TkinterFace:
     self.talking_queue = Queue()
 
     self.update()
+    self.update_mouth()
 
   # Used to set the face expression
   def set_face_expression(self, expression):
@@ -118,6 +119,14 @@ class TkinterFace:
     #   print(parameter_data["current_value"], parameter_data["target_value"])
     #   print(np.minimum(parameter_data["current_value"], parameter_data["target_value"]))
     #   print(np.maximum(parameter_data["current_value"], parameter_data["target_value"]))
+
+  def update_mouth(self):
+    # Update mouth open factor from queue
+    if self.is_enabled and not self.talking_queue.empty():
+      self.target_mouth_open_factor = self.talking_queue.get()
+      self.face_parameters["mouth_open_factor"]["target_value"] = self.target_mouth_open_factor
+    
+    self.root.after(50, self.update_mouth)
 
   # Loop for updating the face
   def update(self):
@@ -171,11 +180,6 @@ class TkinterFace:
       self.face_parameters["face_position"]["target_value"][2] = 0
       self.face_parameters["look_target"]["target_value"] = self.face_parameters["face_position"]["current_value"] + np.array([0, 0, 1000])
 
-    # Update mouth open factor from queue
-    if self.is_enabled and not self.talking_queue.empty():
-      self.target_mouth_open_factor = self.talking_queue.get()
-      self.face_parameters["mouth_open_factor"]["target_value"] = self.target_mouth_open_factor
-
     # Update face parameters that can be customized
     for parameter_name in self.face_parameters:
       if "target_value" in self.face_parameters[parameter_name]:
@@ -225,8 +229,8 @@ class TkinterFace:
     eye_ovals = [ (
       eye_position[0] - eye_half_size[0],
       eye_position[1] - eye_half_size[1],
-      eye_position[0] + eye_half_size[0],
-      eye_position[1] + eye_half_size[1]
+      eye_position[0] + eye_half_size[0] + 1, # +1 because eye_half_size of zero leaves artifacts on the canvas
+      eye_position[1] + eye_half_size[1] + 1
     ) for eye_position in eye_positions ]
 
     pupil_ovals = [ (

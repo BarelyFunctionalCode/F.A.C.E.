@@ -7,10 +7,10 @@ class Display:
   def __init__(self):
     # Initialize base Tkinter window and the face and terminal objects
     self.root = tk.Tk()
-    self.root.title("H.A.N.N.S")
-    self.root.geometry("800x600+1920+480")
-    self.root.wm_attributes('-topmost', 1)
-    self.root.overrideredirect(1)
+    self.root.title("Face")
+    self.root.geometry("800x600")
+    # self.root.wm_attributes('-topmost', 1)
+    # self.root.overrideredirect(1)
 
     self.is_active = True
     self.is_waking_up = False

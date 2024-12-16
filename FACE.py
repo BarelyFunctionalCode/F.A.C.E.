@@ -1,8 +1,7 @@
 import time
 import threading
 
-
-from display.display import Display
+from .display.display import Display
 
 class FACE:
   def __init__(self):
@@ -19,7 +18,7 @@ class FACE:
       if self.display.root == None: break
 
       if self.text != "":
-        self.display.enqueue_update_text(self.text)
+        self.display.enqueue_update_text(self.text + "\n\n")
         self.text = ""
 
       if self.expression != "":

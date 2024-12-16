@@ -18,7 +18,7 @@ class TkinterTerminal:
     self.frame = tk.Frame(self.root, bg="black")
     self.frame.pack(fill=tk.X, padx=5, pady=5, side=tk.BOTTOM)
 
-    self.terminal_text = tk.Text(self.frame, height=10, state='disabled', bg="black", fg="green", font=("Courier", 20), borderwidth=0, highlightthickness=0, insertbackground="green")
+    self.terminal_text = tk.Text(self.frame, height=10, state='disabled', wrap='word', bg="black", fg="green", font=("Courier", 20), borderwidth=0, highlightthickness=0, insertbackground="green")
     self.terminal_text.pack()
 
     # Add blinking cursor
@@ -36,32 +36,33 @@ class TkinterTerminal:
 
   def update(self):
     # Update text output from queue
-    while not self.update_queue.empty():
-      self.terminal_text_output += self.update_queue.get()
-
     new_line = False
-    
-    if self.terminal_text_output_index < len(self.terminal_text_output):
-      self.is_active = True
-      if self.is_enabled:
+    if not self.update_queue.empty() and not self.is_active and not self.is_enabled: self.is_active = True
+    if self.is_enabled:
+      while not self.update_queue.empty():
+        self.terminal_text_output += self.update_queue.get()
+      
+      if self.terminal_text_output_index < len(self.terminal_text_output):
+        self.is_active = True
+        
         # Add new character to text object
         char = self.terminal_text_output[self.terminal_text_output_index]
         self.terminal_text.config(state='normal')
         self.terminal_text.insert("end-2c", char)
         self.terminal_text.config(state='disabled')
-        if char == "\n":
+        if char == "\n" or ((char == "." or char == "?" or char == "!") and char != self.terminal_text_output[min(self.terminal_text_output_index - 1, 0)]):
           new_line = True
         self.terminal_text_output_index += 1
         self.terminal_text.see(tk.END)
 
         # Update talking queue to move the mouth when text is outputting
-        if char == " " or char == "\n" or char == "\t":
+        if char == " " or new_line:
           self.talking_queue.put(0.0)
         else:
           self.talking_queue.put(0.7)
-    else:
-      self.is_active = False
-      self.talking_queue.put(0.0)
+      else:
+        self.is_active = False
+        self.talking_queue.put(0.0)
   
     # Longer delay after new line
     if new_line:
