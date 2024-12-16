@@ -10,7 +10,7 @@ class TkinterTerminal:
     self.is_enabled = True
 
     # Terminal Parameters
-    self.terminal_text_output = "Hello, I am H.A.N.N.S!\nHow can I help you?\n\n"
+    self.terminal_text_output = ""
     self.terminal_text_output_index = 0
     self.update_queue = Queue()
 
@@ -61,6 +61,7 @@ class TkinterTerminal:
           self.talking_queue.put(0.7)
     else:
       self.is_active = False
+      self.talking_queue.put(0.0)
   
     # Longer delay after new line
     if new_line:

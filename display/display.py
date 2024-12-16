@@ -1,9 +1,7 @@
 import tkinter as tk
-from time import sleep
 
 from .face import TkinterFace
 from .terminal import TkinterTerminal
-from .expressions import expressions
 
 class Display:
   def __init__(self):
